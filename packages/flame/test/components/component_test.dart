@@ -92,6 +92,19 @@ void main() {
       });
 
       testWithFlameGame(
+          'remove child component of component which is moved to another parent',
+          (game) async {
+        final parent1 = LifecycleComponent('parent1')..addToParent(game);
+        final parent2 = LifecycleComponent('parent2')..addToParent(game);
+        final child = LifecycleComponent('child')..addToParent(parent2);
+        await game.ready();
+        parent2.parent = parent1;
+        child.removeFromParent();
+        game.update(0);
+        expect(child.isRemoved, true);
+      });
+
+      testWithFlameGame(
         'component mounted completes when changing parent',
         (game) async {
           final parent = LifecycleComponent('parent');
@@ -1528,6 +1541,7 @@ class _SlowLoadingComponent extends Component {
 
 class SlowComponent extends Component {
   SlowComponent(this.name, this.loadTime);
+
   final double loadTime;
   final String name;
 
@@ -1558,6 +1572,7 @@ class _SelfRemovingOnMountComponent extends Component {
 
 class _Pair {
   _Pair(this.component, this.points);
+
   final Component component;
   final List<Vector2> points;
 }
